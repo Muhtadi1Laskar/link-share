@@ -23,7 +23,7 @@ export const createLinks = async ({
             link
         )
         VALUES($1, $2, $3)
-        ON CONFLICT (link) DO NOTHING
+        ON CONFLICT (user_id, link) DO NOTHING
         RETURNING *
     `;
     const result = await pool.query(queryStr,[
