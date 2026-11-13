@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import pool from "../config/database.js";
 import { ApiError } from "../utils/error.js";
+import { createUser, userExists } from "../repository/users.repository.js";
 
 export const signup = async ({
     firstName,
@@ -8,28 +9,20 @@ export const signup = async ({
     emails,
     password
 }) => {
-    const query = `
-        SELECT
-        EXISTS(SELECT 1 FROM users WHERE emails = $1)
-    `;
-    const res = await pool.query(query, [emails]);
-    const existing = res.rows[0].exists;
+    const existing = await userExists(emails);
 
     if (existing) throw new ApiError(409, "User already exists with the given email");
 
     const encryptedPassword = await bcrypt.hash(password, 10);
 
-    const insertQuery = `
-        INSERT INTO
-        users (first_name, last_name, emails, password_hash)
-        VALUES($1, $2, $3, $4)
-        RETURNING *
-    `;
+    const user = await createUser({
+        firstName,
+        lastName,
+        emails,
+        password_hash: encryptedPassword
+    });
 
-    const user = await pool.query(
-        insertQuery,
-        [firstName, lastName, emails, encryptedPassword]
-    );
+    if (!user) throw new ApiError(200, "Failed to create the user");
 
     return {
         message: "Successfully created the user"
