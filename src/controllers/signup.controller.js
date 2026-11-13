@@ -1,4 +1,4 @@
-import { signup } from "../services/signup.service.js";
+import { signup } from "../services/authentication.service.js";
 import { successResponse } from "../utils/response.js";
 
 export default async function SignupController(req, res, next) {
