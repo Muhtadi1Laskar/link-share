@@ -13,7 +13,7 @@ export async function SignupController(req, res, next) {
 export async function LoginController(req, res, next) {
     try {
         const token = await login(req.body);
-        successResponse(res, { jwt: token }, 200);
+        successResponse(res, token, 200);
     } catch (error) {
         next(error);
     }

@@ -11,7 +11,11 @@ export const signup = async ({
 }) => {
     const existing = await userExists(emails);
 
-    if (existing) throw new ApiError(409, "User already exists with the given email");
+    if (existing) throw new ApiError(
+        409, 
+        "User_Already_Exists",
+        "User already exists with the given email"
+    );
 
     const encryptedPassword = await bcrypt.hash(password, 10);
 
@@ -35,7 +39,11 @@ export const login = async ({ email, password }) => {
     if (!existing) throw new ApiError(404, "User the email does not exists");
 
     if (!(await bcrypt.compare(password, existing.password_hash))) {
-        throw new ApiError(403, "Invalid password");
+        throw new ApiError(
+            403,
+            "Invalid_Password", 
+            "Invalid password"
+        );
     }
 
     const payload = {
