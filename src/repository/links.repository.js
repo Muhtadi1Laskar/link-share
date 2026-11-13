@@ -2,13 +2,11 @@ import pool from "../config/database.js";
 
 export const retriveLinks = async (userId) => {
     const queryStr = `
-        SELECT * 
-        FROM LINKS
-        WHERE user_id = $1
+        SELECT * FROM links WHERE user_id = $1
     `;
     const result = await pool.query(queryStr, [userId]);
 
-    return result.rows[0] ?? null;
+    return result.rows ?? null;
 }
 
 export const createLinks = async ({ 

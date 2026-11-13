@@ -1,4 +1,4 @@
-import { createLinks } from "../repository/links.repository.js"
+import { createLinks, retriveLinks } from "../repository/links.repository.js"
 import { ApiError } from "../utils/error.js";
 
 export const createLinksService = async ({
@@ -19,5 +19,37 @@ export const createLinksService = async ({
     return {
         message: "Successfully created a link",
         link: createdLinks
+    };
+}
+
+export const retriveLinksService = async (userId) => {
+    const links = await retriveLinks(userId);
+
+    if (!links) {
+        throw new ApiError(
+            200,
+            "NO_DATA_AVAILABLE",
+            "No Saved links"
+        );
+    }
+
+    if (links.length === 0) {
+        return {
+            message: "The user doesn't gave any links stored",
+            data: []
+        };
+    }
+
+    const cleanLinks = links.map(res => {
+        return {
+            linkId: res.link_id,
+            websiteName: res.website_name,
+            link: res.link
+        };
+    })
+
+    return {
+        message: "Successfully retrived the data",
+        data: cleanLinks
     };
 }
