@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import { ApiError } from "../utils/error.js";
-import { createUser, userExists } from "../repository/users.repository.js";
+import { createUser, findUsers, userExists } from "../repository/users.repository.js";
 
 export const signup = async ({
     firstName,
@@ -25,5 +26,35 @@ export const signup = async ({
 
     return {
         message: "Successfully created the user"
+    };
+}
+
+export const login = async ({ email, password }) => {
+    const existing = await findUsers(email);
+
+    if (!existing) throw new ApiError(404, "User the email does not exists");
+
+    if (!(await bcrypt.compare(password, existing.password_hash))) {
+        throw new ApiError(403, "Invalid password");
+    }
+
+    const payload = {
+        user: {
+            id: existing.user_id
+        }
+    };
+
+    const token = jwt.sign(
+        payload,
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' }
+    );
+
+    return {
+        authToken: token,
+        users: {
+            name: `${existing.first_name} ${existing.last_name}`,
+            email: existing.emails
+        }
     };
 }
