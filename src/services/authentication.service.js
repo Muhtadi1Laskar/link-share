@@ -36,7 +36,11 @@ export const signup = async ({
 export const login = async ({ email, password }) => {
     const existing = await findUsers(email);
 
-    if (!existing) throw new ApiError(404, "User the email does not exists");
+    if (!existing) throw new ApiError(
+        404,
+        "User_Doesn't_Exists", 
+        "User the email does not exists"
+    );
 
     if (!(await bcrypt.compare(password, existing.password_hash))) {
         throw new ApiError(

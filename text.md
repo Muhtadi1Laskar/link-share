@@ -13,9 +13,19 @@ This is for personal use for the moment. The API has the following endpoints:
         "emails": "dwight@gmail.com",
         "password": "bran"
     }
+
     Response body: 
     {
         "message": "Successfully created the user"  
+    }
+
+    User Exists Response Body: 
+    {
+        "success": false,
+        "error": {
+            "code": "User_Already_Exists",
+            "message": "User already exists with the given email"
+        }
     }
 
 2. Login: https://link-share-e032.onrender.com/v1/api/auth/login
@@ -23,12 +33,22 @@ This is for personal use for the moment. The API has the following endpoints:
         "email": "dwight@gmail.com",
         "password": "bran"
     }
+
     Response body: 
     {
         "authToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiM2E2YmQ4MWEtNDk2YS00MmE3LTgwNGEtMjIwMDI2ODFkZjlhIn0sImlhdCI6MTc5NDU5MTMzOSwiZXhwIjoxNzk0NTk0OTM5fQ.zTUh0Lq8On0HZEI1Woc5CiErelyIPp_aZ8BkofvILa0",
         "users": {
             "name": "Dwight Schrute",
             "email": "dwight@gmail.com"
+        }
+    }
+
+    Invalid Password Response Body: 
+    {
+        "success": false,
+        "error": {
+            "code": "Invalid_Password",
+            "message": "Invalid password"
         }
     }
 
