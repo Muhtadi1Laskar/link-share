@@ -1,24 +1,49 @@
-export function errorHandler(err, req, res, next) {
-    const statusCode = err.statusCode || 500;
+import { ApiError } from "../utils/error.js";
 
-    if(statusCode >= 500) {
-        req.log?.error({ err }, "Request failed");
+export function errorHandler(err, req, res, next) {
+    if (res.headersSent) {
+        return next(err);
+    }
+
+    const isApiError = err instanceof ApiError;
+
+    const statusCode =
+        isApiError &&
+        Number.isInteger(err.statusCode) &&
+        err.statusCode >= 400 &&
+        err.statusCode <= 599
+            ? err.statusCode
+            : 500;
+
+    const isServerError = statusCode >= 500;
+
+    if (isServerError) {
+        req.log?.error(
+            { err },
+            "Unexpected server error"
+        );
+    }
+
+    else {
+        req.log?.warn?.(
+            {
+                code: err.code,
+                statusCode
+            },
+            "Request rejected"
+        );
     }
 
     res.status(statusCode).json({
+        success: false,
         error: {
-            code: err.code || "INTERNAL_SERVER_ERROR",
-            message: 
-                statusCode >= 500
-                ? "An unexcepted error occurred"
+            code: isApiError
+                ? err.code
+                : "INTERNAL_SERVER_ERROR",
+
+            message: isServerError
+                ? "An unexpected error occurred."
                 : err.message
         }
     });
 }
-
-// export const errorHandler = (err, req, res, next) => {
-//     console.error(err.stack);
-//     res.status(500).json({
-//         message: err.message || "Internal server error"
-//     });
-// }

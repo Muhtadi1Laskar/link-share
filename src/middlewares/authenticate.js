@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { errorResponse } from "../utils/response";
+import { errorResponse } from "../utils/response.js";
 
 export const verifyJWT = (req, res, next) => {
     try {
@@ -8,7 +8,7 @@ export const verifyJWT = (req, res, next) => {
 
         if (!authHeader) {
             return errorResponse(res, {
-                message: "Authorization header is required"
+                message: "No Authorization header provided. Access is denied"
             }, 401);
         }
 
