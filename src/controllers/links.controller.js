@@ -1,4 +1,4 @@
-import { createLinksService, retriveLinksService } from "../services/links.service.js";
+import { createLinksService, deleteLinkService, retriveLinksService } from "../services/links.service.js";
 import { successResponse } from "../utils/response.js";
 
 export async function RetriveAllLinksController(req, res, next) {
@@ -16,6 +16,18 @@ export async function CreateLinkController(req, res, next) {
             userId: req.userId,
             websiteName: req.body.websiteName,
             link: req.body.link
+        });
+        successResponse(res, response, 200);
+    } catch (error) {
+        next(error);
+    }
+}
+
+export async function DeleteLinkController(req, res, next) {
+    try {
+        const response = await deleteLinkService({
+            userId: req.userId,
+            linkId: req.body.linkId
         });
         successResponse(res, response, 200);
     } catch (error) {

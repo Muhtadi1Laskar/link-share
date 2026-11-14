@@ -1,4 +1,4 @@
-import { createLinks, retriveLinks } from "../repository/links.repository.js"
+import { createLinks, deleteLinks, doLinkExists, retriveLinks } from "../repository/links.repository.js"
 import { ApiError } from "../utils/error.js";
 
 export const createLinksService = async ({
@@ -51,5 +51,32 @@ export const retriveLinksService = async (userId) => {
     return {
         message: "Successfully retrived the data",
         data: cleanLinks
+    };
+}
+
+export const deleteLinkService = async ({ userId, linkId }) => {
+    const existingLinks = await doLinkExists(userId, linkId);
+
+    if (!existingLinks) {
+        throw new ApiError(
+            404,
+            "NO_DATA_AVAILABLE",
+            "No Saved Links"
+        );
+    }
+
+    const deletedLinks = await deleteLinks(userId, linkId);
+
+    if (!deletedLinks) {
+        throw new ApiError(
+            400,
+            "DATA_DELETION_FAILED",
+            "Failed to delete the link"
+        );
+    }
+
+    return {
+        message: "Successfully deleted the link",
+        data: deletedLinks
     };
 }
