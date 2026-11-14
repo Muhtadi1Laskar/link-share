@@ -69,7 +69,7 @@ export const deleteLinkService = async ({ userId, linkId }) => {
 
     if (!deletedLinks) {
         throw new ApiError(
-            400,
+            500,
             "DATA_DELETION_FAILED",
             "Failed to delete the link"
         );
